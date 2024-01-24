@@ -1,55 +1,30 @@
-import express, { Request, Response } from "express";
-import fs from "fs";
-import path from "path";
+import express, { NextFunction, Request, Response } from "express";
+import * as mongoose from "mongoose";
+
+import { ApiError } from "./errors/api.error";
+import { authRouter } from "./routers/auth.router";
+import { UserRouter } from "./routers/user.router";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const dbToRead = path.resolve("db", "db.json");
-fs.readFile(dbToRead, "utf8", (err, data) => {
-  if (err) throw err;
-
-  const dbData = JSON.parse(data);
-
-  app.get("/users", (req: Request, res: Response) => {
-    res.json(dbData);
-  });
-
-  app.get("/users/:id", (req: Request, res: Response) => {
-    const { id } = req.params;
-    res.json(dbData[id - 1]);
-  });
-  app.post("/users", (req: Request, res: Response) => {
-    const body = req.body;
-    res.json(dbData.push(body));
-    fs.writeFile(dbToRead, JSON.stringify(dbData), "utf8", (err) => {
-      if (err) throw err;
-      res.json(dbData);
+app.use("/auth", authRouter);
+app.use("/users", UserRouter);
+app.use(
+  "*",
+  (err: ApiError, req: Request, res: Response, next: NextFunction) => {
+    return res.status(err?.status || 500).json({
+      message: err?.message,
+      status: err?.status,
     });
-  });
-  app.delete("/users/:id", (req: Request, res: Response) => {
-    const { id } = req.params;
-    res.json(dbData.splice(id - 1, 1));
-    fs.writeFile(dbToRead, JSON.stringify(dbData), "utf8", (err) => {
-      if (err) throw err;
-      res.json(dbData);
-    });
-  });
-  app.put("/users/:id", (req: Request, res: Response) => {
-    const { id } = req.params;
-    const body = req.body;
-    dbData[id - 1] = body;
-    res.json(dbData);
-    fs.writeFile(dbToRead, JSON.stringify(dbData), "utf8", (err) => {
-      if (err) throw err;
-      res.json(dbData);
-    });
-  });
-});
+  },
+);
 
 const PORT = 3000;
-app.listen(PORT, () => {
+const MONGO_DB = "mongodb://localhost:27017/levchukrs1";
+app.listen(PORT, async () => {
+  await mongoose.connect(MONGO_DB);
   console.log("Server has started");
 });
