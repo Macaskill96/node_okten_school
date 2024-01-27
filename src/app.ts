@@ -23,7 +23,8 @@ app.use(
 );
 
 const PORT = 3000;
-const MONGO_DB = "mongodb://localhost:27017/levchukrs1";
+const MONGO_DB =
+  "mongodb+srv://levchukrs96:uawow9668@cluster0.kp1mb1o.mongodb.net/levchukrs1";
 app.listen(PORT, async () => {
   await mongoose.connect(MONGO_DB);
   console.log("Server has started");

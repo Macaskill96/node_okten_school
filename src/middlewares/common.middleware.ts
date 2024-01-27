@@ -6,7 +6,7 @@ import { ApiError } from "../errors/api.error";
 class CommonMiddleware {
   public isValid(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = Number(req.params.id);
+      const id = req.params.id;
       if (!isObjectIdOrHexString(id)) {
         throw new ApiError("ID is not valid", 401);
       }

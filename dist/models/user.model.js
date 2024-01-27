@@ -18,5 +18,8 @@ const userSchema = new mongoose_1.Schema({
         required: true,
         select: false,
     },
+}, {
+    timestamps: true,
+    versionKey: false,
 });
-exports.User = (0, mongoose_1.model)("User");
+exports.User = (0, mongoose_1.model)("User", userSchema);
