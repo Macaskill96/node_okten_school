@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import * as mongoose from "mongoose";
 
 import { ApiError } from "./errors/api.error";
+import { adminRouter } from "./routers/admin.router";
 import { authRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
+app.use("/admin", adminRouter);
 app.use("/users", UserRouter);
 app.use(
   "*",

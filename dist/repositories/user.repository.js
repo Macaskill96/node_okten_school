@@ -14,6 +14,9 @@ class UserRepository {
         }
         return user;
     }
+    async getOneByParams(params) {
+        return await user_model_1.User.findOne(params);
+    }
     async updateById(id, body) {
         return await user_model_1.User.findByIdAndUpdate(id, body, { returnDocument: "after" });
     }

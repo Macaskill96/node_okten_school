@@ -1,3 +1,5 @@
+import { FilterQuery } from "mongoose";
+
 import { ApiError } from "../errors/api.error";
 import { User } from "../models/user.model";
 import { IUser } from "../types/user.type";
@@ -12,6 +14,9 @@ class UserRepository {
       throw new ApiError("user not found", 422);
     }
     return user;
+  }
+  public async getOneByParams(params: FilterQuery<IUser>): Promise<IUser> {
+    return await User.findOne(params);
   }
   public async updateById(id: string, body: Partial<IUser>): Promise<IUser> {
     return await User.findByIdAndUpdate(id, body, { returnDocument: "after" });

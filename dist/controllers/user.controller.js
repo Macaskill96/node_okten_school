@@ -13,8 +13,8 @@ class UserController {
         }
     }
     async getById(req, res, next) {
-        const id = req.params.id;
         try {
+            const id = req.params.id;
             const user = await user_service_1.userService.getById(id);
             res.json({ data: user });
         }
@@ -22,22 +22,32 @@ class UserController {
             next(e);
         }
     }
-    async deleteById(req, res, next) {
-        const { id } = req.params;
+    async getMe(req, res, next) {
         try {
-            await user_service_1.userService.deleteById(id);
+            const jwtPayload = req.res.locals.jwtPayload;
+            const user = await user_service_1.userService.getMe(jwtPayload);
+            res.json({ data: user });
+        }
+        catch (e) {
+            next(e);
+        }
+    }
+    async deleteMe(req, res, next) {
+        try {
+            const jwtPayload = req.res.locals.jwtPayload;
+            await user_service_1.userService.deleteMe(jwtPayload);
             res.sendStatus(204);
         }
         catch (e) {
             next(e);
         }
     }
-    async updateById(req, res, next) {
-        const { id } = req.params;
-        const body = req.body;
+    async updateMe(req, res, next) {
         try {
-            const user = await user_service_1.userService.updateById(id, body);
-            res.json(user);
+            const jwtPayload = req.res.locals.jwtPayload;
+            const body = req.body;
+            const user = await user_service_1.userService.updateMe(jwtPayload, body);
+            res.status(201).json(user);
         }
         catch (e) {
             next(e);

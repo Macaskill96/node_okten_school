@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ITokenPayload } from "../services/token.service";
 import { userService } from "../services/user.service";
 import { IUser } from "../types/user.type";
 
@@ -14,8 +15,9 @@ class UserController {
     }
   }
   public async getById(req: Request, res: Response, next: NextFunction) {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
+
       const user = await userService.getById(id);
 
       res.json({ data: user });
@@ -23,22 +25,37 @@ class UserController {
       next(e);
     }
   }
-  public async deleteById(req: Request, res: Response, next: NextFunction) {
-    const { id } = req.params;
+  public async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-      await userService.deleteById(id);
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+
+      const user = await userService.getMe(jwtPayload);
+
+      res.json({ data: user });
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async deleteMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+
+      await userService.deleteMe(jwtPayload);
+
       res.sendStatus(204);
     } catch (e) {
       next(e);
     }
   }
 
-  public async updateById(req: Request, res: Response, next: NextFunction) {
-    const { id } = req.params;
-    const body = req.body as Partial<IUser>;
+  public async updateMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await userService.updateById(id, body);
-      res.json(user);
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const body = req.body as Partial<IUser>;
+
+      const user = await userService.updateMe(jwtPayload, body);
+
+      res.status(201).json(user);
     } catch (e) {
       next(e);
     }
