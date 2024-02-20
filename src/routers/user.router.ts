@@ -9,7 +9,7 @@ import { UserValidator } from "../validators/user.validator";
 const router = Router();
 
 export const UserRouter = router;
-router.get("/", userController.getAll);
+router.get("/", userController.getAllPaginated);
 
 router.get(
   "/me",

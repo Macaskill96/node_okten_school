@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../services/token.service";
 import { userService } from "../services/user.service";
+import { IQuery } from "../types/pagination.type";
 import { IUser } from "../types/user.type";
 
 class UserController {
@@ -10,6 +11,19 @@ class UserController {
       const users = await userService.getAll();
 
       return res.json({ data: users });
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async getAllPaginated(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const usersPaginated = await userService.getMany(req.query as IQuery);
+
+      return res.json(usersPaginated);
     } catch (e) {
       next(e);
     }
